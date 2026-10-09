@@ -1,0 +1,618 @@
+/* The respondent experience. Colours come from the form theme via CSS
+   variables (--tf-*) set in lib/theme.ts. */
+
+.root {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  /* Layout adapts to the container, not the viewport, so the builder's
+     canvas and preview can show the mobile layout inside a narrow frame. */
+  container-type: size;
+  background: var(--tf-bg);
+  color: var(--tf-question);
+  font-family: var(--tf-font);
+  --tf-answer-soft: color-mix(in srgb, var(--tf-answer) 10%, transparent);
+  --tf-answer-mid: color-mix(in srgb, var(--tf-answer) 30%, transparent);
+  --tf-answer-strong: color-mix(in srgb, var(--tf-answer) 60%, transparent);
+}
+
+.root * {
+  font-family: inherit;
+}
+
+/* --------------------------------------------------------------- chrome */
+
+.progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--tf-answer-mid);
+  z-index: 5;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--tf-answer);
+  transition: width 0.4s ease;
+}
+
+.previewBanner {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px 6px 14px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.previewBanner button {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  font-size: 12px;
+}
+
+.nav {
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.navGroup {
+  display: flex;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.navBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 32px;
+  background: var(--tf-button);
+  color: var(--tf-button-text);
+  transition: opacity 0.15s;
+}
+
+.navBtn + .navBtn {
+  border-left: 1px solid color-mix(in srgb, var(--tf-button-text) 30%, transparent);
+}
+
+.navBtn:disabled {
+  opacity: 0.45;
+}
+
+.navBtn:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.madeWith {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 4px;
+  background: var(--tf-button);
+  color: var(--tf-button-text);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* ---------------------------------------------------------------- stage */
+
+.stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 72px 24px 96px;
+  overflow-y: auto;
+}
+
+.slide {
+  width: 100%;
+  max-width: 720px;
+  margin: auto 0;
+}
+
+/* ------------------------------------------------------------- question */
+
+.question {
+  position: relative;
+  padding-left: 40px;
+}
+
+.number {
+  position: absolute;
+  left: 0;
+  top: 5px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--tf-answer);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.title {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.33;
+  font-weight: 400;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.required {
+  margin-left: 2px;
+}
+
+.description {
+  margin: 8px 0 0;
+  font-size: 20px;
+  line-height: 1.4;
+  color: color-mix(in srgb, var(--tf-question) 70%, transparent);
+  white-space: pre-wrap;
+}
+
+/* Builder inline editing: the title/description become textareas styled the same. */
+.editable {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  outline: none;
+  resize: none;
+  overflow: hidden;
+  background: transparent;
+  color: inherit;
+  /* Only the family: size, weight and line height come from .title etc. */
+  font-family: inherit;
+  text-align: inherit;
+}
+
+.editable::placeholder {
+  color: color-mix(in srgb, var(--tf-question) 35%, transparent);
+}
+
+.answerArea {
+  margin-top: 32px;
+}
+
+.hint {
+  margin: 0 0 12px;
+  font-size: 15px;
+  color: color-mix(in srgb, var(--tf-question) 70%, transparent);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.okBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 14px;
+  border-radius: 4px;
+  background: var(--tf-button);
+  color: var(--tf-button-text);
+  font-size: 20px;
+  font-weight: 700;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+  transition: filter 0.15s;
+}
+
+.okBtn:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.okBtn:disabled {
+  opacity: 0.7;
+  cursor: progress;
+}
+
+.enterHint {
+  font-size: 12px;
+  color: color-mix(in srgb, var(--tf-question) 70%, transparent);
+}
+
+.enterHint b {
+  font-weight: 700;
+}
+
+.error {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  background: #f7e6e6;
+  color: #af0404;
+  font-size: 14px;
+}
+
+.shake {
+  animation: shake 0.35s ease;
+}
+
+@keyframes shake {
+  20%,
+  60% {
+    transform: translateX(-6px);
+  }
+  40%,
+  80% {
+    transform: translateX(6px);
+  }
+}
+
+/* ----------------------------------------------------------- text input */
+
+.textInput {
+  width: 100%;
+  padding: 0 0 8px;
+  border: none;
+  border-bottom: 1px solid var(--tf-answer-mid);
+  border-radius: 0;
+  outline: none;
+  background: transparent;
+  color: var(--tf-answer);
+  font-size: 30px;
+  line-height: 1.25;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.textInput:focus {
+  border-bottom-color: var(--tf-answer);
+  box-shadow: 0 1px 0 0 var(--tf-answer);
+}
+
+.textInput::placeholder {
+  color: var(--tf-answer-mid);
+}
+
+.textArea {
+  resize: none;
+  overflow: hidden;
+  min-height: 46px;
+}
+
+.subHint {
+  margin-top: 8px;
+  font-size: 12px;
+  color: color-mix(in srgb, var(--tf-question) 60%, transparent);
+}
+
+/* --------------------------------------------------------------- choices */
+
+.choices {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  max-width: 100%;
+}
+
+.choice {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 220px;
+  max-width: 100%;
+  min-height: 40px;
+  padding: 6px 40px 6px 8px;
+  border: 1px solid var(--tf-answer-strong);
+  border-radius: 4px;
+  background: var(--tf-answer-soft);
+  color: var(--tf-answer);
+  font-size: 20px;
+  text-align: left;
+  transition:
+    background 0.15s,
+    box-shadow 0.15s;
+}
+
+.choice:hover {
+  background: var(--tf-answer-mid);
+}
+
+.choice.selected {
+  box-shadow: inset 0 0 0 1px var(--tf-answer);
+  background: var(--tf-answer-mid);
+}
+
+.choice.blink {
+  animation: blink 0.25s ease 2;
+}
+
+@keyframes blink {
+  50% {
+    background: var(--tf-answer-soft);
+  }
+}
+
+.key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  border: 1px solid var(--tf-answer-strong);
+  border-radius: 2px;
+  background: var(--tf-bg);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.selected .key {
+  background: var(--tf-answer);
+  border-color: var(--tf-answer);
+  color: var(--tf-bg);
+}
+
+.check {
+  position: absolute;
+  right: 10px;
+  display: flex;
+}
+
+.choiceLabel {
+  flex: 1;
+  word-break: break-word;
+}
+
+.choiceEdit {
+  flex: 1;
+  min-width: 80px;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: inherit;
+  font-size: inherit;
+}
+
+.choiceRemove {
+  position: absolute;
+  right: 6px;
+  display: flex;
+  padding: 4px;
+  border-radius: 4px;
+  color: var(--tf-answer);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.choice:hover .choiceRemove,
+.choiceRemove:focus-visible {
+  opacity: 0.8;
+}
+
+.addChoice {
+  margin-top: 4px;
+  padding: 6px 2px;
+  color: var(--tf-answer);
+  font-size: 16px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* --------------------------------------------------------------- yes/no */
+
+.yesNo {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.yesNo .choice {
+  min-width: 160px;
+}
+
+/* --------------------------------------------------------------- rating */
+
+.rating {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.star {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 4px;
+  color: var(--tf-answer);
+  font-size: 15px;
+}
+
+.star svg {
+  width: 44px;
+  height: 44px;
+  transition: transform 0.15s;
+}
+
+.star:hover svg {
+  transform: scale(1.08);
+}
+
+.scale {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: 6px;
+  width: 100%;
+}
+
+.scale .choice {
+  min-width: 0;
+  padding: 10px 0;
+  justify-content: center;
+  font-weight: 500;
+}
+
+/* -------------------------------------------------------------- dropdown */
+
+.dropdown {
+  position: relative;
+}
+
+.dropdownToggle {
+  position: absolute;
+  right: 0;
+  bottom: 12px;
+  color: var(--tf-answer);
+}
+
+.options {
+  max-height: 260px;
+  margin-top: 8px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.options .choice {
+  width: 100%;
+  padding-right: 12px;
+}
+
+.option.active {
+  background: var(--tf-answer-mid);
+}
+
+.empty {
+  font-size: 16px;
+  color: var(--tf-answer-strong);
+}
+
+/* -------------------------------------------------------------- screens */
+
+.screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+}
+
+.screenTitle {
+  margin: 0;
+  font-size: 32px;
+  line-height: 1.25;
+  font-weight: 400;
+  white-space: pre-wrap;
+}
+
+.screenDescription {
+  margin: 0;
+  font-size: 20px;
+  color: color-mix(in srgb, var(--tf-question) 70%, transparent);
+  white-space: pre-wrap;
+}
+
+.screen .actions {
+  margin-top: 12px;
+}
+
+.center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  height: 100%;
+  text-align: center;
+  padding: 24px;
+}
+
+/* --------------------------------------------------------------- mobile */
+
+@container (max-width: 640px) {
+  .stage {
+    padding: 56px 16px 88px;
+    align-items: flex-start;
+  }
+
+  .slide {
+    margin-top: 12vh;
+  }
+
+  .question {
+    padding-left: 0;
+  }
+
+  .number {
+    position: static;
+    margin-bottom: 8px;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+
+  .description {
+    font-size: 16px;
+  }
+
+  .textInput {
+    font-size: 22px;
+  }
+
+  .choice {
+    width: 100%;
+    font-size: 17px;
+  }
+
+  .yesNo .choice {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .star svg {
+    width: 34px;
+    height: 34px;
+  }
+
+  .enterHint {
+    display: none;
+  }
+
+  .nav {
+    right: 16px;
+    bottom: 16px;
+  }
+
+  .screenTitle {
+    font-size: 24px;
+  }
+}

@@ -1,0 +1,19 @@
+# Render Blueprint for the FastAPI backend: https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: typeform-clone-api
+    runtime: python
+    rootDir: backend
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.4
+      # Comma-separated list of allowed origins, e.g. https://your-app.vercel.app
+      # "*" is safe here because the API uses no cookies or credentials.
+      - key: CORS_ORIGINS
+        value: "*"
+      - key: SEED_ON_STARTUP
+        value: "true"
